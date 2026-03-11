@@ -1,0 +1,54 @@
+services:
+  app1:
+    build: .
+    container_name: laravel_app1
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - db
+
+  app2:
+    build: .
+    container_name: laravel_app2
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - db
+
+  app3:
+    build: .
+    container_name: laravel_app3
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - db
+
+  webserver:
+    image: nginx:latest
+    container_name: laravel_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx/load-balancer.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app1
+      - app2
+      - app3
+
+  db:
+    image: mysql:8.0
+    container_name: laravel_db
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: laravel_pma
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
