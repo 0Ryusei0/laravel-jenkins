@@ -13,26 +13,32 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'docker run --rm -v ${WORKSPACE}/src:/app -w /app composer:latest composer install --no-interaction'
+                dir('src') {
+                    sh 'php -r "copy(\'https://getcomposer.org/installer\', \'composer-setup.php\');"'
+                    sh 'php composer-setup.php'
+                    sh 'php composer.phar install --no-interaction'
+                }
             }
         }
 
         stage('Copy .env') {
             steps {
                 echo 'Setting up environment...'
-                sh '''
-                    if [ ! -f ${WORKSPACE}/src/.env ]; then
-                        cp ${WORKSPACE}/src/.env.example ${WORKSPACE}/src/.env
-                    fi
-                '''
+                dir('src') {
+                    sh '''
+                        if [ ! -f .env ]; then
+                            cp .env.example .env
+                        fi
+                    '''
+                }
             }
         }
 
         stage('Deploy') {
             steps {
                 echo 'Deploying with Docker Compose...'
-                sh 'docker compose -f ${WORKSPACE}/docker-compose.yml down || true'
-                sh 'docker compose -f ${WORKSPACE}/docker-compose.yml up -d --build'
+                sh 'docker compose down || true'
+                sh 'docker compose up -d --build'
             }
         }
 
@@ -40,7 +46,7 @@ pipeline {
             steps {
                 echo 'Running migrations...'
                 sh 'sleep 10'
-                sh 'docker compose -f ${WORKSPACE}/docker-compose.yml exec -T app php artisan migrate --force'
+                sh 'docker compose exec -T app php artisan migrate --force'
             }
         }
     }
