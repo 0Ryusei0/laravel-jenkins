@@ -13,7 +13,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'docker run --rm -v $(pwd):/app -w /app composer:latest composer install --no-interaction'
+                sh 'docker run --rm -v $(pwd)/src:/app -w /app composer:latest composer install --no-interaction'
             }
         }
 
@@ -21,8 +21,8 @@ pipeline {
             steps {
                 echo 'Setting up environment...'
                 sh '''
-                    if [ ! -f .env ]; then
-                        cp .env.example .env
+                    if [ ! -f src/.env ]; then
+                        cp src/.env.example src/.env
                     fi
                 '''
             }
