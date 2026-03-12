@@ -32,8 +32,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying with Docker Compose...'
-                sh 'docker compose down || true'
-                sh 'docker compose up -d --build'
+                sh 'docker-compose down || true'
+                sh 'docker-compose up -d --build'
                 sh 'chmod -R 777 src/storage'
             }
         }
@@ -41,8 +41,8 @@ pipeline {
             steps {
                 echo 'Running migrations...'
                 sh 'sleep 15'
-                sh 'docker compose exec -T app1 php artisan key:generate --force'
-                sh 'docker compose exec -T app1 php artisan migrate --force'
+                sh 'docker-compose exec -T app1 php artisan key:generate --force'
+                sh 'docker-compose exec -T app1 php artisan migrate --force'
             }
         }
     }
