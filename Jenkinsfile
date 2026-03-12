@@ -49,6 +49,7 @@ pipeline {
                 sh 'docker-compose exec -T app php artisan migrate --force'
             }
         }
+    }
 
     post {
         success {
