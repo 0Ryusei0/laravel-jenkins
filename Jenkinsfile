@@ -45,7 +45,7 @@ pipeline {
         stage('Run Migrations') {
             steps {
                 echo 'Running migrations...'
-                sh 'sleep 10'
+                sh 'sleep 15'
                 sh 'docker-compose exec -T app php artisan migrate --force'
             }
         }
