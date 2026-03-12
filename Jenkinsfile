@@ -37,8 +37,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying with Docker Compose...'
-                sh 'docker compose down || true'
-                sh 'docker compose up -d --build'
+                sh 'docker-compose down || true'
+                sh 'docker-compose up -d --build'
             }
         }
 
@@ -46,10 +46,9 @@ pipeline {
             steps {
                 echo 'Running migrations...'
                 sh 'sleep 10'
-                sh 'docker compose exec -T app php artisan migrate --force'
+                sh 'docker-compose exec -T app php artisan migrate --force'
             }
         }
-    }
 
     post {
         success {
